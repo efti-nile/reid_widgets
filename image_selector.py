@@ -1,11 +1,10 @@
 import ipywidgets as widgets
-from google.colab.patches import cv2_imshow
-from IPython.display import clear_output
 import cv2
 
+from ndarray_image import NdarrayImage
 
-class ImageSelector:
-    """Image selector for Google Colab"""
+
+class ImageSelector(widgets.HBox):
 
     def __init__(self, images, resize_to=(50, 100)):
         """
@@ -15,7 +14,7 @@ class ImageSelector:
         """
         self.thumbs = [cv2.resize(img, resize_to) for img in images]
         self.active_mask = [True] * len(images)
-        self.outs = [widgets.Output() for _ in range(len(images))]
+        self.im_objs = [NdarrayImage(value=img) for img in self.thumbs]
         self.btns = [
             widgets.Button(description='RM',
                            button_style='success',
@@ -25,20 +24,13 @@ class ImageSelector:
         for n, btn in enumerate(self.btns):
             btn.n = n
             btn.on_click(lambda x: self.button_callback(x))
-        self.vboxes = [widgets.VBox([out, btn]) for out, btn in zip(self.outs, self.btns)]
-        for out, img in zip(self.outs, self.thumbs):
-            with out:
-                cv2_imshow(img)
-        self.main_box = widgets.HBox(self.vboxes)
+        self.vboxes = [widgets.VBox([imo, btn]) for imo, btn in zip(self.im_objs, self.btns)]
+        super().__init__(self.vboxes)
 
-    def get_choosen(self):
+    def get_chosen(self):
         return self.active_mask
 
     def button_callback(self, b):
         n = b.n
         self.active_mask[n] ^= True  # toggle
         b.button_style = 'success' if self.active_mask[n] else 'danger'
-
-    def __repr__(self):  # to work with display()
-        display(self.main_box)
-        return ''

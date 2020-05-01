@@ -1,10 +1,11 @@
 import itertools
+import random
 import os
 
-from google.colab.patches import cv2_imshow
 import ipywidgets as widgets
-import random
 import cv2
+
+from ndarray_image import NdarrayImage
 
 
 class IdRandomGen:
@@ -44,10 +45,8 @@ class ReidAnnotation(widgets.VBox):
                                       layout=widgets.Layout(width=f'auto'))
             self.btn.on_click(self.button_callback)
             self.is_chosen = False  # if this image box selected by user
-            self.image_out = widgets.Output()
-            with self.image_out:
-                cv2_imshow(self.thumb)
-            super().__init__([self.image_out, self.btn])
+            self.im_obj = NdarrayImage(value=self.thumb)
+            super().__init__([self.im_obj, self.btn])
 
         def button_callback(self, b):
             self.is_chosen ^= True

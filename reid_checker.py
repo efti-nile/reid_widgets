@@ -1,7 +1,6 @@
 import itertools
 
 import ipywidgets as widgets
-from google.colab.patches import cv2_imshow
 from IPython.display import clear_output
 import cv2
 
@@ -18,7 +17,7 @@ class ReidChecker:
             reid_dict: Dict[reid_ID] -> ( Dict[cam_id] -> Object )
             cam_num: total number of cameras
             get_imgs_func: a function Object -> List[ndarray images]
-            get_refine_func: a function (Object, selection mask) -> Object
+            refine_func: a function (Object, selection mask) -> Object
         """
         self.reid_dict = reid_dict
         self.cam_num = cam_num
@@ -28,6 +27,7 @@ class ReidChecker:
         self.ids_to_sort = list(self.reid_dict.keys())  # a list with IDs
         self.ids_ok = []
         self.ids_skip = []
+        self.cur_id = None
 
         self.img_selectors = None
 
@@ -81,7 +81,7 @@ class ReidChecker:
 
     def apply_selector(self):
         for tb, slt in zip(self.reid_dict[self.cur_id].values(), self.img_selectors):
-            self.refine(tb, slt.get_choosen())
+            self.refine(tb, slt.get_chosen())
 
     def finalize(self):
         total = len(self.ids_skip) + len(self.ids_ok)
