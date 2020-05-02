@@ -2,7 +2,7 @@ import ipywidgets as widgets
 from IPython.display import clear_output
 import cv2
 
-from image_selector import ImageSelectors
+from image_selector import ImageSelector
 
 
 NUM_IMGS_TO_SHOW = 10
