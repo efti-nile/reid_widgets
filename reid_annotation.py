@@ -45,8 +45,8 @@ class ReidAnnotation(widgets.VBox):
                                       layout=widgets.Layout(width=f'auto'))
             self.btn.on_click(self.button_callback)
             self.is_chosen = False  # if this image box selected by user
-            self.im_obj = NdarrayImage(value=self.thumb)
-            super().__init__([self.im_obj, self.btn])
+            self.im_obj = NdarrayImage(value=self.thumb, width=resize_to[0], height=resize_to[1])
+            super().__init__([self.im_obj, self.btn], layout=widgets.Layout(width=f'{resize_to[0] + 3}px'))
 
         def button_callback(self, b):
             self.is_chosen ^= True
@@ -64,12 +64,7 @@ class ReidAnnotation(widgets.VBox):
         self.id_gen = IdRandomGen()
         self.btn = widgets.Button(description='NEXT', layout=widgets.Layout(width='60%', height='50px'))
         self.btn.on_click(self._button_callback)
-        self.cam_box_layout = widgets.Layout(overflow='scroll hidden',
-                                        border='3px solid black',
-                                        width='500px',
-                                        height='',
-                                        flex_flow='row',
-                                        display='flex')
+        self.cam_box_layout = widgets.Layout(width='2000px', height='300px', display='flex', flex_flow='wrap')
         self._create_camboxes()
         super().__init__([self.btn] + self.cam_boxes)
 

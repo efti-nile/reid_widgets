@@ -1,10 +1,8 @@
-import itertools
-
 import ipywidgets as widgets
 from IPython.display import clear_output
 import cv2
 
-from image_selector import ImageSelector
+from image_selector import ImageSelectors
 
 
 NUM_IMGS_TO_SHOW = 10
@@ -59,8 +57,8 @@ class ReidChecker:
             if self.ids_to_sort:
                 self.cur_id = self.ids_to_sort.pop(0)
                 self.img_selectors = []
-                for tb in itertools.islice(self.reid_dict[self.cur_id].values(), NUM_IMGS_TO_SHOW):
-                    imgs = self.get_imgs(tb)
+                for tb in self.reid_dict[self.cur_id].values():
+                    imgs = self.get_imgs(tb)[:NUM_IMGS_TO_SHOW]
                     print(f'ID: {self.cur_id} Loading {len(imgs)} images...')
                     cis = ImageSelector(imgs)
                     self.img_selectors.append(cis)
