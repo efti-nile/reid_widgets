@@ -62,9 +62,10 @@ class ReidAnnotation(widgets.VBox):
         self.datasets_root = datasets_root
 
         self.id_gen = IdRandomGen()
-        self.btn = widgets.Button(description='NEXT', layout=widgets.Layout(width='60%', height='50px'))
+        self.btn = widgets.Button(description='NEXT', layout=widgets.Layout(width='1000px', height='50px'))
         self.btn.on_click(self._button_callback)
-        self.cam_box_layout = widgets.Layout(width='2000px', height='300px', display='flex', flex_flow='wrap')
+        self.cam_box_layout = widgets.Layout(width='1000px', height='250px', display='flex',
+                                             flex_flow='wrap', margin='20px')
         self._create_camboxes()
         super().__init__([self.btn] + self.cam_boxes)
 
@@ -77,8 +78,9 @@ class ReidAnnotation(widgets.VBox):
     def _button_callback(self, b):
         reid_id = self.id_gen.get_id()
         # Get all chosen images
-        selected_imgs_by_cam = {n: list(itertools.chain(*[img_box.imgs for img_box in cam_box.children if img_box.is_chosen]))
-                                for n, cam_box in enumerate(self.cam_boxes)}
+        selected_imgs_by_cam = \
+            {n: list(itertools.chain(*[img_box.imgs for img_box in cam_box.children if img_box.is_chosen]))
+             for n, cam_box in enumerate(self.cam_boxes)}
         # Save to `$dataset_root/$dataset_name/$cam_id/$reid_id/*.jpg`
         for cam_id, imgs in selected_imgs_by_cam.items():
             if imgs:
