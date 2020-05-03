@@ -72,7 +72,7 @@ class ReidChecker:
     def truncate_track(self, t):
         n = len(self.get_imgs(t))
         indices_to_leave = set((i * (MAX_NUM_IMGS - 1)) // (n - 1) for i in range(n))
-        mask = [i in indices_to_leave for i in range(MAX_NUM_IMGS)]
+        mask = [i in indices_to_leave for i in range(n)]
         self.refine(t, mask)
 
     def ok_callback(self, b):
