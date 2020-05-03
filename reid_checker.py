@@ -5,7 +5,7 @@ import cv2
 from image_selector import ImageSelector
 
 
-NUM_IMGS_TO_SHOW = 10
+MAX_NUM_IMGS = 10
 
 
 class ReidChecker:
@@ -52,13 +52,15 @@ class ReidChecker:
         self.next_id()
 
     def next_id(self):
-        with self.outs[1]:
+        with self.outs[1]:  # data output
             clear_output()
             if self.ids_to_sort:
                 self.cur_id = self.ids_to_sort.pop(0)
                 self.img_selectors = []
                 for tb in self.reid_dict[self.cur_id].values():
-                    imgs = self.get_imgs(tb)[:NUM_IMGS_TO_SHOW]
+                    if len(self.get_imgs(tb)) > MAX_NUM_IMGS:   # track is too long
+                        self.truncate_track(tb)
+                    imgs = self.get_imgs(tb)
                     print(f'ID: {self.cur_id} Loading {len(imgs)} images...')
                     cis = ImageSelector(imgs)
                     self.img_selectors.append(cis)
@@ -66,6 +68,12 @@ class ReidChecker:
             else:
                 print('No more data')
                 self.finalize()
+
+    def truncate_track(self, t):
+        n = len(self.get_imgs(t))
+        indices_to_leave = set((i * (MAX_NUM_IMGS - 1)) // (n - 1) for i in range(n))
+        mask = [i in indices_to_leave for i in range(MAX_NUM_IMGS)]
+        self.refine(t, mask)
 
     def ok_callback(self, b):
         self.ids_ok.append(self.cur_id)
