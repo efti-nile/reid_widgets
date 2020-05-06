@@ -42,12 +42,15 @@ def refine_tracking_box(tb, mask):
 def save_tblists_for_reid(tblists, dataset_name, datasets_root, id_gen):
     """Saves a list of lists of `TrackingBox` objects for ReID training.
     Folder structure:
-    $dataset_root/$dataset_name/$cam_id/$reid_id/*.jpg
+    $dataset_root/$dataset_name/$cam_id/$id/*.jpg
     """
+    reid_id_to_id = {}  # for mapping `reid_id` to random ID a person will be saved with
     for cam_id, tbl in enumerate(tblists):
         for tb in tbl:
             if tb.reid_id is not None:
-                dir_path = os.path.join(datasets_root, dataset_name, str(cam_id), str(id_gen.get_id()))
+                if reid_id_to_id.get(tb.reid_id) is None:
+                    reid_id_to_id[tb.reid_id] = id_gen.get_id()
+                dir_path = os.path.join(datasets_root, dataset_name, str(cam_id), str(reid_id_to_id[tb.reid_id]))
                 os.makedirs(dir_path, exist_ok=True)
                 for img_id, img in enumerate(tb.imgs):
                     cv2.imwrite(os.path.join(dir_path, f'{img_id}.jpg'), img)
